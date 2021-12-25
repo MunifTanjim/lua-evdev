@@ -199,75 +199,39 @@ local mod = {
   EVIOCSMASK = _IOW("E", 0x93, input_mask),
 
   EVIOCSCLOCKID = _IOW("E", 0xa0, int),
-
-  ID_BUS = 0,
-  ID_VENDOR = 1,
-  ID_PRODUCT = 2,
-  ID_VERSION = 3,
-
-  BUS_PCI = 0x01,
-  BUS_ISAPNP = 0x02,
-  BUS_USB = 0x03,
-  BUS_HIL = 0x04,
-  BUS_BLUETOOTH = 0x05,
-  BUS_VIRTUAL = 0x06,
-
-  BUS_ISA = 0x10,
-  BUS_I8042 = 0x11,
-  BUS_XTKBD = 0x12,
-  BUS_RS232 = 0x13,
-  BUS_GAMEPORT = 0x14,
-  BUS_PARPORT = 0x15,
-  BUS_AMIGA = 0x16,
-  BUS_ADB = 0x17,
-  BUS_I2C = 0x18,
-  BUS_HOST = 0x19,
-  BUS_GSC = 0x1A,
-  BUS_ATARI = 0x1B,
-  BUS_SPI = 0x1C,
-  BUS_RMI = 0x1D,
-  BUS_CEC = 0x1E,
-  BUS_INTEL_ISHTP = 0x1F,
-
-  MT_TOOL_FINGER = 0x00,
-  MT_TOOL_PEN = 0x01,
-  MT_TOOL_PALM = 0x02,
-  MT_TOOL_DIAL = 0x0a,
-  MT_TOOL_MAX = 0x0f,
-
-  FF_STATUS_STOPPED = 0x00,
-  FF_STATUS_PLAYING = 0x01,
-  FF_STATUS_MAX = 0x01,
-
-  FF_RUMBLE = 0x50,
-  FF_PERIODIC = 0x51,
-  FF_CONSTANT = 0x52,
-  FF_SPRING = 0x53,
-  FF_FRICTION = 0x54,
-  FF_DAMPER = 0x55,
-  FF_INERTIA = 0x56,
-  FF_RAMP = 0x57,
-
-  FF_EFFECT_MIN = 0x50, -- FF_RUMBLE
-  FF_EFFECT_MAX = 0x57, -- FF_RAMP
-
-  FF_SQUARE = 0x58,
-  FF_TRIANGLE = 0x59,
-  FF_SINE = 0x5a,
-  FF_SAW_UP = 0x5b,
-  FF_SAW_DOWN = 0x5c,
-  FF_CUSTOM = 0x5d,
-
-  FF_WAVEFORM_MIN = 0x58, -- FF_SQUARE
-  FF_WAVEFORM_MAX = 0x5d, -- FF_CUSTOM
-
-  FF_GAIN = 0x60,
-  FF_AUTOCENTER = 0x61,
-
-  FF_MAX_EFFECTS = 0x60, -- FF_GAIN
-
-  FF_MAX = 0x7f,
-  FF_CNT = (0x7f + 1), -- (FF_MAX + 1)
 }
+
+local const = require("evdev.linux.input-constant")
+
+local event_map_by_type = {
+  [-1] = { by_name = const.EV, by_code = {} },
+  [const.EV.EV_SYN] = { by_name = const.SYN, by_code = {} },
+  [const.EV.EV_KEY] = { by_name = const.KEY, by_code = {} },
+  [const.EV.EV_REL] = { by_name = const.REL, by_code = {} },
+  [const.EV.EV_ABS] = { by_name = const.ABS, by_code = {} },
+  [const.EV.EV_MSC] = { by_name = const.MSC, by_code = {} },
+  [const.EV.EV_SW] = { by_name = const.SW, by_code = {} },
+  [const.EV.EV_LED] = { by_name = const.LED, by_code = {} },
+  [const.EV.EV_SND] = { by_name = const.SND, by_code = {} },
+  [const.EV.EV_REP] = { by_name = const.REP, by_code = {} },
+  [const.EV.EV_FF] = { by_name = const.FF, by_code = {} },
+  [const.EV.EV_PWR] = { by_name = const.PWR, by_code = {} },
+  [const.EV.EV_FF_STATUS] = { by_name = const.FF_STATUS, by_code = {} },
+}
+
+for _, event_map in pairs(event_map_by_type) do
+  for name, code in pairs(event_map.by_name) do
+    mod[name] = code
+    event_map.by_code[code] = name
+  end
+end
+
+function mod.get_code_by_name(type_, name)
+  return event_map_by_type[type_].by_name[name]
+end
+
+function mod.get_name_by_code(type_, code)
+  return event_map_by_type[type_].by_code[code]
+end
 
 return mod
