@@ -1,14 +1,14 @@
 local ffi = require("ffi")
 
-local function octal(s)
-  return tonumber(s, 8)
-end
-
 ffi.cdef([[
 int printf(const char *__restrict __format, ...);
 int open(const char *__file, int __oflag, ...);
 extern char *strerror (int __errnum);
 ]])
+
+local function octal(s)
+  return tonumber(s, 8)
+end
 
 local mod = {
   O_RDONLY = octal("0000"),
