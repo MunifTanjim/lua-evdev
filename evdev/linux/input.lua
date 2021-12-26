@@ -221,6 +221,15 @@ local event_map_by_type = {
   [const.EV.EV_FF_STATUS] = { by_name = const.FF_STATUS, by_code = {} },
 }
 
+--[[
+-- NOTE: the assignment below is done as a hack to make
+--       sumneko_lua language server recognize the type
+--       and offer completion for keys.
+--]]
+
+mod.constant = event_map_by_type[-1].by_name
+
+---@type table<EVDEV_INPUT_CONSTANT, number>
 mod.constant = {}
 
 for _, event_map in pairs(event_map_by_type) do
@@ -230,10 +239,16 @@ for _, event_map in pairs(event_map_by_type) do
   end
 end
 
+---@param type_ number
+---@param name EVDEV_INPUT_CONSTANT
+---@return number
 function mod.get_code_by_name(type_, name)
   return event_map_by_type[type_].by_name[name]
 end
 
+---@param type_ number
+---@param code number
+---@return EVDEV_INPUT_CONSTANT
 function mod.get_name_by_code(type_, code)
   return event_map_by_type[type_].by_code[code]
 end
