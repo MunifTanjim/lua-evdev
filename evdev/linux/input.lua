@@ -203,6 +203,8 @@ local mod = {
 
 local const = require("evdev.linux.input-constant")
 
+mod.grouped_constant = const
+
 local event_map_by_type = {
   [-1] = { by_name = const.EV, by_code = {} },
   [const.EV.EV_SYN] = { by_name = const.SYN, by_code = {} },
@@ -219,9 +221,11 @@ local event_map_by_type = {
   [const.EV.EV_FF_STATUS] = { by_name = const.FF_STATUS, by_code = {} },
 }
 
+mod.constant = {}
+
 for _, event_map in pairs(event_map_by_type) do
   for name, code in pairs(event_map.by_name) do
-    mod[name] = code
+    mod.constant[name] = code
     event_map.by_code[code] = name
   end
 end
