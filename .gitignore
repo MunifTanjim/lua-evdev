@@ -2,3 +2,6 @@
 /lua_modules
 /.luarocks
 /lua
+
+lua-evdev-*.rock
+lua-evdev-*.tar.gz
