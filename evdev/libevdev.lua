@@ -133,7 +133,70 @@ int libevdev_get_repeat(const struct libevdev *dev, int *delay, int *period);
 
 local c = ffi.load("evdev")
 
+local enum = {
+  ---@type number
+  LIBEVDEV_READ_FLAG_SYNC = ffi.C.LIBEVDEV_READ_FLAG_SYNC,
+  ---@type number
+  LIBEVDEV_READ_FLAG_NORMAL = ffi.C.LIBEVDEV_READ_FLAG_NORMAL,
+  ---@type number
+  LIBEVDEV_READ_FLAG_FORCE_SYNC = ffi.C.LIBEVDEV_READ_FLAG_FORCE_SYNC,
+  ---@type number
+  LIBEVDEV_READ_FLAG_BLOCKING = ffi.C.LIBEVDEV_READ_FLAG_BLOCKING,
+
+  ---@type number
+  LIBEVDEV_LOG_ERROR = ffi.C.LIBEVDEV_LOG_ERROR,
+  ---@type number
+  LIBEVDEV_LOG_INFO = ffi.C.LIBEVDEV_LOG_INFO,
+  ---@type number
+  LIBEVDEV_LOG_DEBUG = ffi.C.LIBEVDEV_LOG_DEBUG,
+
+  ---@type number
+  LIBEVDEV_GRAB = ffi.C.LIBEVDEV_GRAB,
+  ---@type number
+  LIBEVDEV_UNGRAB = ffi.C.LIBEVDEV_UNGRAB,
+
+  ---@type number
+  LIBEVDEV_READ_STATUS_SUCCESS = ffi.C.LIBEVDEV_READ_STATUS_SUCCESS,
+  ---@type number
+  LIBEVDEV_READ_STATUS_SYNC = ffi.C.LIBEVDEV_READ_STATUS_SYNC,
+
+  ---@type number
+  LIBEVDEV_LED_ON = ffi.C.LIBEVDEV_LED_ON,
+  ---@type number
+  LIBEVDEV_LED_OFF = ffi.C.LIBEVDEV_LED_OFF,
+}
+
+enum.libevdev_read_flag = {
+  SYNC = enum.LIBEVDEV_READ_FLAG_SYNC,
+  NORMAL = enum.LIBEVDEV_READ_FLAG_NORMAL,
+  FORCE_SYNC = enum.LIBEVDEV_READ_FLAG_FORCE_SYNC,
+  BLOCKING = enum.LIBEVDEV_READ_FLAG_BLOCKING,
+}
+
+enum.libevdev_log_priority = {
+  ERROR = enum.LIBEVDEV_LOG_ERROR,
+  INFO = enum.LIBEVDEV_LOG_INFO,
+  DEBUG = enum.LIBEVDEV_LOG_DEBUG,
+}
+
+enum.libevdev_grab_mode = {
+  GRAB = enum.LIBEVDEV_GRAB,
+  UNGRAB = enum.LIBEVDEV_UNGRAB,
+}
+
+enum.libevdev_read_status = {
+  SUCCESS = enum.LIBEVDEV_READ_STATUS_SUCCESS,
+  SYNC = enum.LIBEVDEV_READ_STATUS_SYNC,
+}
+
+enum.libevdev_led_value = {
+  ON = enum.LIBEVDEV_LED_ON,
+  OFF = enum.LIBEVDEV_LED_OFF,
+}
+
 local mod = {
+  enum = enum,
+
   libevdev_new = c.libevdev_new,
   libevdev_new_from_fd = c.libevdev_new_from_fd,
   libevdev_free = c.libevdev_free,
