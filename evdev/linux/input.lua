@@ -229,7 +229,7 @@ local event_map_by_type = {
 
 mod.constant = event_map_by_type[-1].by_name
 
----@type table<EVDEV_INPUT_CONSTANT, number>
+---@type table<EVDEV_INPUT_CONSTANT_NAME, number>
 mod.constant = {}
 
 for _, event_map in pairs(event_map_by_type) do
@@ -240,7 +240,7 @@ for _, event_map in pairs(event_map_by_type) do
 end
 
 ---@param type_ number
----@param name EVDEV_INPUT_CONSTANT
+---@param name EVDEV_INPUT_CONSTANT_NAME
 ---@return number
 function mod.get_code_by_name(type_, name)
   return event_map_by_type[type_].by_name[name]
@@ -248,7 +248,7 @@ end
 
 ---@param type_ number
 ---@param code number
----@return EVDEV_INPUT_CONSTANT
+---@return EVDEV_INPUT_CONSTANT_NAME
 function mod.get_name_by_code(type_, code)
   return event_map_by_type[type_].by_code[code]
 end

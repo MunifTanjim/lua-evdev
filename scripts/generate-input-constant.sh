@@ -38,7 +38,7 @@ function generate_tables() {
     if [[ "${constant_names}" = "\"''\"" ]]; then
       constant_names="nil"
     fi
-    echo "---@alias EVDEV_INPUT_CONSTANT_${group_name} ${constant_names}"
+    echo "---@alias EVDEV_INPUT_${group_name}_CONSTANT_NAME ${constant_names}"
     echo ""
 
     echo "local ${group_name} = {"
@@ -94,9 +94,9 @@ function substitute_values() {
 substitute_values
 
 function generate_exports() {
-  local constant_type_names="$(printf "EVDEV_INPUT_CONSTANT_%s|" "${group_names[@]}")"
-  constant_type_names="${constant_type_names%|}"
-  echo "---@alias EVDEV_INPUT_CONSTANT ${constant_type_names}"
+  local constant_name_types="$(printf "EVDEV_INPUT_%s_CONSTANT_NAME|" "${group_names[@]}")"
+  constant_name_types="${constant_name_types%|}"
+  echo "---@alias EVDEV_INPUT_CONSTANT_NAME ${constant_name_types}"
   echo ""
 
   echo "local mod = {"

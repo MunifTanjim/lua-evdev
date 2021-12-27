@@ -23,7 +23,7 @@ function Event:code()
   return self.ev.code
 end
 
----@return EVDEV_INPUT_CONSTANT
+---@return EVDEV_INPUT_CONSTANT_NAME
 function Event:code_name()
   return input.get_name_by_code(self.ev.type, self.ev.code)
 end
@@ -33,7 +33,7 @@ function Event:type()
   return self.ev.type
 end
 
----@return EVDEV_INPUT_CONSTANT_EV
+---@return EVDEV_INPUT_EV_CONSTANT_NAME
 function Event:type_name()
   return input.get_name_by_code(-1, self.ev.type)
 end
