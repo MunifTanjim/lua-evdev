@@ -42,7 +42,7 @@ local function init(class, pathname, flags)
 
   self.dev = dev_ptr[0]
 
-  ffi.gc(dev_ptr, evdev.libevdev_free)
+  ffi.gc(self.dev, evdev.libevdev_free)
 
   return self
 end
