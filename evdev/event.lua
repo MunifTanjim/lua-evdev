@@ -1,5 +1,3 @@
-local ffi = require("ffi")
-
 local input = require("evdev.linux.input")
 
 ---@class Event
@@ -12,7 +10,7 @@ local function init(class, ev)
   ---@type Event
   local self = setmetatable({}, { __index = class })
 
-  self.ev = ev or ffi.new("struct input_event")
+  self.ev = ev or input.new_input_event()
 
   return self
 end

@@ -124,7 +124,9 @@ struct ff_effect {
 ---@alias evdev_input_absinfo { value: number, minimum: number, maximum: number, fuzz: number, flat: number, resolution: number }
 
 local int = ffi.typeof("int")
+local int_ptr = ffi.typeof("int[1]")
 local uint2 = ffi.typeof("unsigned int[2]")
+local input_event = ffi.typeof("struct input_event")
 local input_id = ffi.typeof("struct input_id")
 local input_absinfo = ffi.typeof("struct input_absinfo")
 local input_keymap_entry = ffi.typeof("struct input_keymap_entry")
@@ -204,6 +206,18 @@ local mod = {
 
   EVIOCSCLOCKID = _IOW("E", 0xa0, int),
 }
+
+---@type fun(init: number|nil): ffi.ctype*
+mod.new_int = int
+
+---@type fun(): ffi.ctype*|{ [0]: number }
+mod.new_int_ptr = int_ptr
+
+---@type fun(): ffi.ctype*|evdev_input_event
+mod.new_input_event = input_event
+
+---@type fun(init: evdev_input_absinfo|nil): ffi.ctype*|evdev_input_absinfo
+mod.new_input_absinfo = input_absinfo
 
 local const = require("evdev.linux.input-constant")
 
