@@ -119,6 +119,10 @@ struct ff_effect {
 };
 ]])
 
+---@alias evdev_timeval { tv_sec: number, tv_usec: number }
+---@alias evdev_input_event { time: evdev_timeval, type: number, code: number, value: number }
+---@alias evdev_input_absinfo { value: number, minimum: number, maximum: number, fuzz: number, flat: number, resolution: number }
+
 local int = ffi.typeof("int")
 local uint2 = ffi.typeof("unsigned int[2]")
 local input_id = ffi.typeof("struct input_id")
