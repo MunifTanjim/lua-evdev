@@ -43,6 +43,12 @@ local mod = {
   enum = enum,
 }
 
+---@param bits number|number[]
+---@return number
+function mod.bit_or(bits)
+  return type(bits) == "number" and bits or bit.bor(table.unpack(bits))
+end
+
 ---@param str_ptr ffi.cdata* pointer to string
 ---@return string
 function mod.to_string(str_ptr)
@@ -53,7 +59,7 @@ end
 ---@param flags number[]
 ---@return number fd file descriptor
 function mod.open_file(pathname, flags)
-  return open(pathname, bit.bor(table.unpack(flags)))
+  return open(pathname, mod.bit_or(flags))
 end
 
 ---@param errnum number
