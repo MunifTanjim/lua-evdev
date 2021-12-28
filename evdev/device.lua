@@ -203,7 +203,7 @@ end
 ---@param value_ptr? ffi.cdata*|{ [0]: number }
 ---@return number|nil
 function Device:fetch_event_value(ev_type, code, value_ptr)
-  value_ptr = value_ptr or input.new_int_ptr()
+  value_ptr = value_ptr or input.ctype.int_ptr()
   local rc = evdev.libevdev_fetch_event_value(self.dev, ev_type, code, value_ptr)
   if rc ~= 0 then
     return value_ptr[0]
@@ -222,7 +222,7 @@ end
 ---@param value_ptr? ffi.cdata*|{ [0]: number }
 ---@return number|nil
 function Device:fetch_slot_value(slot, code, value_ptr)
-  value_ptr = value_ptr or input.new_int_ptr()
+  value_ptr = value_ptr or input.ctype.int_ptr()
   local rc = evdev.libevdev_fetch_slot_value(self.dev, slot, code, value_ptr)
   if rc ~= 0 then
     return value_ptr[0]
@@ -258,9 +258,9 @@ end
 function Device:enable_event_code(ev_type, code, data)
   local data_type = type(data)
   if data_type == "number" then
-    data = input.new_int(data)
+    data = input.ctype.int(data)
   elseif data_type == "table" then
-    data = input.new_input_absinfo(data)
+    data = input.ctype.input_absinfo(data)
   end
 
   return evdev.libevdev_enable_event_code(self.dev, ev_type, code, data)

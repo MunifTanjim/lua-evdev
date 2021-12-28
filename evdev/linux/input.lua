@@ -123,15 +123,17 @@ struct ff_effect {
 ---@alias evdev_input_event { time: evdev_timeval, type: number, code: number, value: number }
 ---@alias evdev_input_absinfo { value: number, minimum: number, maximum: number, fuzz: number, flat: number, resolution: number }
 
-local int = ffi.typeof("int")
-local int_ptr = ffi.typeof("int[1]")
-local uint2 = ffi.typeof("unsigned int[2]")
-local input_event = ffi.typeof("struct input_event")
-local input_id = ffi.typeof("struct input_id")
-local input_absinfo = ffi.typeof("struct input_absinfo")
-local input_keymap_entry = ffi.typeof("struct input_keymap_entry")
-local input_mask = ffi.typeof("struct input_mask")
-local ff_effect = ffi.typeof("struct ff_effect")
+local ctype = {
+  int = ffi.typeof("int"),
+  int_ptr = ffi.typeof("int[1]"),
+  uint2 = ffi.typeof("unsigned int[2]"),
+  input_event = ffi.typeof("struct input_event"),
+  input_id = ffi.typeof("struct input_id"),
+  input_absinfo = ffi.typeof("struct input_absinfo"),
+  input_keymap_entry = ffi.typeof("struct input_keymap_entry"),
+  input_mask = ffi.typeof("struct input_mask"),
+  ff_effect = ffi.typeof("struct ff_effect"),
+}
 
 local ioctl = require("evdev.linux.sys.ioctl")
 local _IOC = ioctl._IOC
@@ -143,15 +145,15 @@ local mod = {
   EV_VERSION = 0x010001,
   INPUT_KEYMAP_BY_INDEX = 0x01, -- (1 << 0)
 
-  EVIOCGVERSION = _IOR("E", 0x01, int),
-  EVIOCGID = _IOR("E", 0x02, input_id),
-  EVIOCGREP = _IOR("E", 0x03, uint2),
-  EVIOCSREP = _IOW("E", 0x03, uint2),
+  EVIOCGVERSION = _IOR("E", 0x01, ctype.int),
+  EVIOCGID = _IOR("E", 0x02, ctype.input_id),
+  EVIOCGREP = _IOR("E", 0x03, ctype.uint2),
+  EVIOCSREP = _IOW("E", 0x03, ctype.uint2),
 
-  EVIOCGKEYCODE = _IOR("E", 0x04, uint2),
-  EVIOCGKEYCODE_V2 = _IOR("E", 0x04, input_keymap_entry),
-  EVIOCSKEYCODE = _IOW("E", 0x04, uint2),
-  EVIOCSKEYCODE_V2 = _IOW("E", 0x04, input_keymap_entry),
+  EVIOCGKEYCODE = _IOR("E", 0x04, ctype.uint2),
+  EVIOCGKEYCODE_V2 = _IOR("E", 0x04, ctype.input_keymap_entry),
+  EVIOCSKEYCODE = _IOW("E", 0x04, ctype.uint2),
+  EVIOCSKEYCODE_V2 = _IOW("E", 0x04, ctype.input_keymap_entry),
 
   EVIOCGNAME = function(len)
     return _IOC(_IOC_READ, "E", 0x06, len)
@@ -187,37 +189,27 @@ local mod = {
     return _IOC(_IOC_READ, "E", 0x20 + ev, len)
   end,
   EVIOCGABS = function(abs)
-    return _IOR("E", 0x40 + abs, input_absinfo)
+    return _IOR("E", 0x40 + abs, ctype.input_absinfo)
   end,
   EVIOCSABS = function(abs)
-    return _IOW("E", 0xc0 + abs, input_absinfo)
+    return _IOW("E", 0xc0 + abs, ctype.input_absinfo)
   end,
 
-  EVIOCSFF = _IOW("E", 0x80, ff_effect),
-  EVIOCRMFF = _IOW("E", 0x81, int),
-  EVIOCGEFFECTS = _IOR("E", 0x84, int),
+  EVIOCSFF = _IOW("E", 0x80, ctype.ff_effect),
+  EVIOCRMFF = _IOW("E", 0x81, ctype.int),
+  EVIOCGEFFECTS = _IOR("E", 0x84, ctype.int),
 
-  EVIOCGRAB = _IOW("E", 0x90, int),
-  EVIOCREVOKE = _IOW("E", 0x91, int),
+  EVIOCGRAB = _IOW("E", 0x90, ctype.int),
+  EVIOCREVOKE = _IOW("E", 0x91, ctype.int),
 
-  EVIOCGMASK = _IOR("E", 0x92, input_mask),
+  EVIOCGMASK = _IOR("E", 0x92, ctype.input_mask),
 
-  EVIOCSMASK = _IOW("E", 0x93, input_mask),
+  EVIOCSMASK = _IOW("E", 0x93, ctype.input_mask),
 
-  EVIOCSCLOCKID = _IOW("E", 0xa0, int),
+  EVIOCSCLOCKID = _IOW("E", 0xa0, ctype.int),
 }
 
----@type fun(init: number|nil): ffi.ctype*
-mod.new_int = int
-
----@type fun(): ffi.ctype*|{ [0]: number }
-mod.new_int_ptr = int_ptr
-
----@type fun(): ffi.ctype*|evdev_input_event
-mod.new_input_event = input_event
-
----@type fun(init: evdev_input_absinfo|nil): ffi.ctype*|evdev_input_absinfo
-mod.new_input_absinfo = input_absinfo
+mod.ctype = ctype
 
 local const = require("evdev.linux.input-constant")
 

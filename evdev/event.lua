@@ -10,7 +10,7 @@ local function init(class, ev)
   ---@type Event
   local self = setmetatable({}, { __index = class })
 
-  self.ev = ev or input.new_input_event()
+  self.ev = ev or input.ctype.input_event()
 
   return self
 end
