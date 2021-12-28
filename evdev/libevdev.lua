@@ -329,9 +329,9 @@ local mod = {
   libevdev_kernel_set_led_values = c.libevdev_kernel_set_led_values,
   ---@type fun(dev: ffi.cdata*, clockid: number): number
   libevdev_set_clock_id = c.libevdev_set_clock_id,
-  ---@type fun(dev: ffi.cdata*, type: number): number
+  ---@type fun(ev: ffi.cdata*, type: number): number
   libevdev_event_is_type = c.libevdev_event_is_type,
-  ---@type fun(dev: ffi.cdata*, type: number, code: number): number
+  ---@type fun(ev: ffi.cdata*, type: number, code: number): number
   libevdev_event_is_code = c.libevdev_event_is_code,
   ---@type fun(type: number): ffi.cdata*
   libevdev_event_type_get_name = c.libevdev_event_type_get_name,
