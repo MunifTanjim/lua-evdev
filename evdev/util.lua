@@ -6,14 +6,10 @@ int open(const char *pathname, int flags, ...);
 char *strerror (int errnum);
 ]])
 
----@diagnostic disable: undefined-field
-
----@type fun(errnum: number): ffi.cdata*
-local strerror = ffi.C.strerror
----@type fun(pathname: string, flags: number, ...): number
-local open = ffi.C.open
-
----@diagnostic enable: undefined-field
+---@class clib: ffi.namespace*
+---@field strerror fun(errnum: number): ffi.cdata*
+---@field open fun(pathname: string, flags: number, ...): number
+local clib = ffi.C
 
 if not table.unpack then
   table.unpack = unpack
@@ -59,13 +55,13 @@ end
 ---@param flags number[]
 ---@return number fd file descriptor
 function mod.open_file(pathname, flags)
-  return open(pathname, mod.bit_or(flags))
+  return clib.open(pathname, mod.bit_or(flags))
 end
 
 ---@param errnum number
 ---@return string err
 function mod.err_string(errnum)
-  return mod.to_string(strerror(errnum))
+  return mod.to_string(clib.strerror(errnum))
 end
 
 return mod

@@ -131,8 +131,6 @@ int libevdev_property_from_name_n(const char *name, size_t len);
 int libevdev_get_repeat(const struct libevdev *dev, int *delay, int *period);
 ]])
 
-local c = ffi.load("evdev")
-
 ---@diagnostic disable: undefined-field
 
 local enum = {
@@ -198,177 +196,92 @@ enum.libevdev_led_value = {
   OFF = enum.LIBEVDEV_LED_OFF,
 }
 
+---@class libevdev: ffi.namespace*
+---@field libevdev_new                         fun(): ffi.cdata*
+---@field libevdev_new_from_fd                 fun(fd: number, dev: ffi.cdata*): number
+---@field libevdev_free                        fun(dev: ffi.cdata*): nil
+---@field libevdev_set_log_function            fun(logfunc: ffi.cdata*, data: ffi.cdata*): nil
+---@field libevdev_set_log_priority            fun(priority: number): nil
+---@field libevdev_get_log_priority            fun(): number
+---@field libevdev_set_device_log_function     fun(dev: ffi.cdata*, logfunc: ffi.cdata*, priority: number, data: ffi.cdata*): nil
+---@field libevdev_grab                        fun(dev: ffi.cdata*, grab: number): number
+---@field libevdev_set_fd                      fun(dev: ffi.cdata*, fd: number): number
+---@field libevdev_change_fd                   fun(dev: ffi.cdata*, fd: number): number
+---@field libevdev_get_fd                      fun(dev: ffi.cdata*): number
+---@field libevdev_next_event                  fun(dev: ffi.cdata*, flags: number, ev: ffi.cdata*): number
+---@field libevdev_has_event_pending           fun(dev: ffi.cdata*): number
+---@field libevdev_get_name                    fun(dev: ffi.cdata*): ffi.cdata*
+---@field libevdev_set_name                    fun(dev: ffi.cdata*, name: ffi.cdata*): nil
+---@field libevdev_get_phys                    fun(dev: ffi.cdata*): ffi.cdata*
+---@field libevdev_set_phys                    fun(dev: ffi.cdata*, phys: ffi.cdata*): nil
+---@field libevdev_get_uniq                    fun(dev: ffi.cdata*): ffi.cdata*
+---@field libevdev_set_uniq                    fun(dev: ffi.cdata*, uniq: ffi.cdata*): nil
+---@field libevdev_get_id_product              fun(dev: ffi.cdata*): number
+---@field libevdev_set_id_product              fun(dev: ffi.cdata*, product_id: number): nil
+---@field libevdev_get_id_vendor               fun(dev: ffi.cdata*): number
+---@field libevdev_set_id_vendor               fun(dev: ffi.cdata*, vendor_id: number): nil
+---@field libevdev_get_id_bustype              fun(dev: ffi.cdata*): number
+---@field libevdev_set_id_bustype              fun(dev: ffi.cdata*, bustype: number): nil
+---@field libevdev_get_id_version              fun(dev: ffi.cdata*): number
+---@field libevdev_set_id_version              fun(dev: ffi.cdata*, version: number): nil
+---@field libevdev_get_driver_version          fun(dev: ffi.cdata*): number
+---@field libevdev_has_property                fun(dev: ffi.cdata*, prop: number): number
+---@field libevdev_enable_property             fun(dev: ffi.cdata*, prop: number): number
+---@field libevdev_disable_property            fun(dev: ffi.cdata*, prop: number): number
+---@field libevdev_has_event_type              fun(dev: ffi.cdata*, type: number): number
+---@field libevdev_has_event_code              fun(dev: ffi.cdata*, type: number, code: number): number
+---@field libevdev_get_abs_minimum             fun(dev: ffi.cdata*, code: number): number
+---@field libevdev_get_abs_maximum             fun(dev: ffi.cdata*, code: number): number
+---@field libevdev_get_abs_fuzz                fun(dev: ffi.cdata*, code: number): number
+---@field libevdev_get_abs_flat                fun(dev: ffi.cdata*, code: number): number
+---@field libevdev_get_abs_resolution          fun(dev: ffi.cdata*, code: number): number
+---@field libevdev_get_abs_info                fun(dev: ffi.cdata*, code: number): ffi.cdata*
+---@field libevdev_get_event_value             fun(dev: ffi.cdata*, type: number, code: number): number
+---@field libevdev_set_event_value             fun(dev: ffi.cdata*, type: number, code: number, value: number): number
+---@field libevdev_fetch_event_value           fun(dev: ffi.cdata*, type: number, code: number, value: ffi.cdata*): number
+---@field libevdev_get_slot_value              fun(dev: ffi.cdata*, slot: number, code: number): number
+---@field libevdev_set_slot_value              fun(dev: ffi.cdata*, slot: number, code: number, value: number): number
+---@field libevdev_fetch_slot_value            fun(dev: ffi.cdata*, slot: number, code: number, value: ffi.cdata*): number
+---@field libevdev_get_num_slots               fun(dev: ffi.cdata*): number
+---@field libevdev_get_current_slot            fun(dev: ffi.cdata*): number
+---@field libevdev_set_abs_minimum             fun(dev: ffi.cdata*, code: number, val: number): nil
+---@field libevdev_set_abs_maximum             fun(dev: ffi.cdata*, code: number, val: number): nil
+---@field libevdev_set_abs_fuzz                fun(dev: ffi.cdata*, code: number, val: number): nil
+---@field libevdev_set_abs_flat                fun(dev: ffi.cdata*, code: number, val: number): nil
+---@field libevdev_set_abs_resolution          fun(dev: ffi.cdata*, code: number, val: number): nil
+---@field libevdev_set_abs_info                fun(dev: ffi.cdata*, code: number, abs: ffi.cdata*): nil
+---@field libevdev_enable_event_type           fun(dev: ffi.cdata*, type: number): number
+---@field libevdev_disable_event_type          fun(dev: ffi.cdata*, type: number): number
+---@field libevdev_enable_event_code           fun(dev: ffi.cdata*, type: number, code: number, data: ffi.cdata*): number
+---@field libevdev_disable_event_code          fun(dev: ffi.cdata*, type: number, code: number): number
+---@field libevdev_kernel_set_abs_info         fun(dev: ffi.cdata*, code: number, abs: ffi.cdata*): number
+---@field libevdev_kernel_set_led_value        fun(dev: ffi.cdata*, code: number, value: number): number
+---@field libevdev_kernel_set_led_values       fun(dev: ffi.cdata*, code: number, value: number, ...): number
+---@field libevdev_set_clock_id                fun(dev: ffi.cdata*, clockid: number): number
+---@field libevdev_event_is_type               fun(ev: ffi.cdata*, type: number): number
+---@field libevdev_event_is_code               fun(ev: ffi.cdata*, type: number, code: number): number
+---@field libevdev_event_type_get_name         fun(type: number): ffi.cdata*
+---@field libevdev_event_code_get_name         fun(type: number, code: number): ffi.cdata*
+---@field libevdev_property_get_name           fun(prop: number): ffi.cdata*
+---@field libevdev_event_type_get_max          fun(type: number): number
+---@field libevdev_event_type_from_name        fun(name: ffi.cdata*): number
+---@field libevdev_event_type_from_name_n      fun(name: ffi.cdata*, len: number): number
+---@field libevdev_event_code_from_name        fun(type: number, name: ffi.cdata*): number
+---@field libevdev_event_code_from_name_n      fun(type: number, name: ffi.cdata*, len: number): number
+---@field libevdev_event_value_from_name       fun(type: number, code: number, name: ffi.cdata*): number
+---@field libevdev_event_type_from_code_name   fun(name: ffi.cdata*): number
+---@field libevdev_event_type_from_code_name_n fun(name: ffi.cdata*, len: number): number
+---@field libevdev_event_code_from_code_name   fun(name: ffi.cdata*): number
+---@field libevdev_event_code_from_code_name_n fun(name: ffi.cdata*, len: number): number
+---@field libevdev_event_value_from_name_n     fun(type: number, code: number, name: ffi.cdata*, len: number): number
+---@field libevdev_property_from_name          fun(name: ffi.cdata*): number
+---@field libevdev_property_from_name_n        fun(name: ffi.cdata*, len: number): number
+---@field libevdev_get_repeat                  fun(dev: ffi.cdata*, delay: ffi.cdata*, period: ffi.cdata*): number
+local libevdev = ffi.load("evdev")
+
 local mod = {
   enum = enum,
-
-  ---@diagnostic disable: undefined-field
-
-  ---@type fun(): ffi.cdata*
-  libevdev_new = c.libevdev_new,
-  ---@type fun(fd: number, dev: ffi.cdata*): number
-  libevdev_new_from_fd = c.libevdev_new_from_fd,
-  ---@type fun(dev: ffi.cdata*): nil
-  libevdev_free = c.libevdev_free,
-
-  ---@type fun(logfunc: ffi.cdata*, data: ffi.cdata*): nil
-  libevdev_set_log_function = c.libevdev_set_log_function,
-  ---@type fun(priority: number): nil
-  libevdev_set_log_priority = c.libevdev_set_log_priority,
-  ---@type fun(): number
-  libevdev_get_log_priority = c.libevdev_get_log_priority,
-  ---@type fun(dev: ffi.cdata*, logfunc: ffi.cdata*, priority: number, data: ffi.cdata*): nil
-  libevdev_set_device_log_function = c.libevdev_set_device_log_function,
-
-  ---@type fun(dev: ffi.cdata*, grab: number): number
-  libevdev_grab = c.libevdev_grab,
-  ---@type fun(dev: ffi.cdata*, fd: number): number
-  libevdev_set_fd = c.libevdev_set_fd,
-  ---@type fun(dev: ffi.cdata*, fd: number): number
-  libevdev_change_fd = c.libevdev_change_fd,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_get_fd = c.libevdev_get_fd,
-
-  ---@type fun(dev: ffi.cdata*, flags: number, ev: ffi.cdata*): number
-  libevdev_next_event = c.libevdev_next_event,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_has_event_pending = c.libevdev_has_event_pending,
-  ---@type fun(dev: ffi.cdata*): ffi.cdata*
-  libevdev_get_name = c.libevdev_get_name,
-  ---@type fun(dev: ffi.cdata*, name: ffi.cdata*): nil
-  libevdev_set_name = c.libevdev_set_name,
-  ---@type fun(dev: ffi.cdata*): ffi.cdata*
-  libevdev_get_phys = c.libevdev_get_phys,
-  ---@type fun(dev: ffi.cdata*, phys: ffi.cdata*): nil
-  libevdev_set_phys = c.libevdev_set_phys,
-  ---@type fun(dev: ffi.cdata*): ffi.cdata*
-  libevdev_get_uniq = c.libevdev_get_uniq,
-  ---@type fun(dev: ffi.cdata*, uniq: ffi.cdata*): nil
-  libevdev_set_uniq = c.libevdev_set_uniq,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_get_id_product = c.libevdev_get_id_product,
-  ---@type fun(dev: ffi.cdata*, product_id: number): nil
-  libevdev_set_id_product = c.libevdev_set_id_product,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_get_id_vendor = c.libevdev_get_id_vendor,
-  ---@type fun(dev: ffi.cdata*, vendor_id: number): nil
-  libevdev_set_id_vendor = c.libevdev_set_id_vendor,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_get_id_bustype = c.libevdev_get_id_bustype,
-  ---@type fun(dev: ffi.cdata*, bustype: number): nil
-  libevdev_set_id_bustype = c.libevdev_set_id_bustype,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_get_id_version = c.libevdev_get_id_version,
-  ---@type fun(dev: ffi.cdata*, version: number): nil
-  libevdev_set_id_version = c.libevdev_set_id_version,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_get_driver_version = c.libevdev_get_driver_version,
-  ---@type fun(dev: ffi.cdata*, prop: number): number
-  libevdev_has_property = c.libevdev_has_property,
-  ---@type fun(dev: ffi.cdata*, prop: number): number
-  libevdev_enable_property = c.libevdev_enable_property,
-  ---@type fun(dev: ffi.cdata*, prop: number): number
-  libevdev_disable_property = c.libevdev_disable_property,
-  ---@type fun(dev: ffi.cdata*, type: number): number
-  libevdev_has_event_type = c.libevdev_has_event_type,
-  ---@type fun(dev: ffi.cdata*, type: number, code: number): number
-  libevdev_has_event_code = c.libevdev_has_event_code,
-  ---@type fun(dev: ffi.cdata*, code: number): number
-  libevdev_get_abs_minimum = c.libevdev_get_abs_minimum,
-  ---@type fun(dev: ffi.cdata*, code: number): number
-  libevdev_get_abs_maximum = c.libevdev_get_abs_maximum,
-  ---@type fun(dev: ffi.cdata*, code: number): number
-  libevdev_get_abs_fuzz = c.libevdev_get_abs_fuzz,
-  ---@type fun(dev: ffi.cdata*, code: number): number
-  libevdev_get_abs_flat = c.libevdev_get_abs_flat,
-  ---@type fun(dev: ffi.cdata*, code: number): number
-  libevdev_get_abs_resolution = c.libevdev_get_abs_resolution,
-  ---@type fun(dev: ffi.cdata*, code: number): ffi.cdata*
-  libevdev_get_abs_info = c.libevdev_get_abs_info,
-  ---@type fun(dev: ffi.cdata*, type: number, code: number): number
-  libevdev_get_event_value = c.libevdev_get_event_value,
-  ---@type fun(dev: ffi.cdata*, type: number, code: number, value: number): number
-  libevdev_set_event_value = c.libevdev_set_event_value,
-  ---@type fun(dev: ffi.cdata*, type: number, code: number, value: ffi.cdata*): number
-  libevdev_fetch_event_value = c.libevdev_fetch_event_value,
-  ---@type fun(dev: ffi.cdata*, slot: number, code: number): number
-  libevdev_get_slot_value = c.libevdev_get_slot_value,
-  ---@type fun(dev: ffi.cdata*, slot: number, code: number, value: number): number
-  libevdev_set_slot_value = c.libevdev_set_slot_value,
-  ---@type fun(dev: ffi.cdata*, slot: number, code: number, value: ffi.cdata*): number
-  libevdev_fetch_slot_value = c.libevdev_fetch_slot_value,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_get_num_slots = c.libevdev_get_num_slots,
-  ---@type fun(dev: ffi.cdata*): number
-  libevdev_get_current_slot = c.libevdev_get_current_slot,
-  ---@type fun(dev: ffi.cdata*, code: number, val: number): nil
-  libevdev_set_abs_minimum = c.libevdev_set_abs_minimum,
-  ---@type fun(dev: ffi.cdata*, code: number, val: number): nil
-  libevdev_set_abs_maximum = c.libevdev_set_abs_maximum,
-  ---@type fun(dev: ffi.cdata*, code: number, val: number): nil
-  libevdev_set_abs_fuzz = c.libevdev_set_abs_fuzz,
-  ---@type fun(dev: ffi.cdata*, code: number, val: number): nil
-  libevdev_set_abs_flat = c.libevdev_set_abs_flat,
-  ---@type fun(dev: ffi.cdata*, code: number, val: number): nil
-  libevdev_set_abs_resolution = c.libevdev_set_abs_resolution,
-  ---@type fun(dev: ffi.cdata*, code: number, abs: ffi.cdata*): nil
-  libevdev_set_abs_info = c.libevdev_set_abs_info,
-  ---@type fun(dev: ffi.cdata*, type: number): number
-  libevdev_enable_event_type = c.libevdev_enable_event_type,
-  ---@type fun(dev: ffi.cdata*, type: number): number
-  libevdev_disable_event_type = c.libevdev_disable_event_type,
-  ---@type fun(dev: ffi.cdata*, type: number, code: number, data: ffi.cdata*): number
-  libevdev_enable_event_code = c.libevdev_enable_event_code,
-  ---@type fun(dev: ffi.cdata*, type: number, code: number): number
-  libevdev_disable_event_code = c.libevdev_disable_event_code,
-  ---@type fun(dev: ffi.cdata*, code: number, abs: ffi.cdata*): number
-  libevdev_kernel_set_abs_info = c.libevdev_kernel_set_abs_info,
-
-  ---@type fun(dev: ffi.cdata*, code: number, value: number): number
-  libevdev_kernel_set_led_value = c.libevdev_kernel_set_led_value,
-  ---@type fun(dev: ffi.cdata*, code: number, value: number, ...): number
-  libevdev_kernel_set_led_values = c.libevdev_kernel_set_led_values,
-  ---@type fun(dev: ffi.cdata*, clockid: number): number
-  libevdev_set_clock_id = c.libevdev_set_clock_id,
-  ---@type fun(ev: ffi.cdata*, type: number): number
-  libevdev_event_is_type = c.libevdev_event_is_type,
-  ---@type fun(ev: ffi.cdata*, type: number, code: number): number
-  libevdev_event_is_code = c.libevdev_event_is_code,
-  ---@type fun(type: number): ffi.cdata*
-  libevdev_event_type_get_name = c.libevdev_event_type_get_name,
-  ---@type fun(type: number, code: number): ffi.cdata*
-  libevdev_event_code_get_name = c.libevdev_event_code_get_name,
-  ---@type fun(prop: number): ffi.cdata*
-  libevdev_property_get_name = c.libevdev_property_get_name,
-  ---@type fun(type: number): number
-  libevdev_event_type_get_max = c.libevdev_event_type_get_max,
-  ---@type fun(name: ffi.cdata*): number
-  libevdev_event_type_from_name = c.libevdev_event_type_from_name,
-  ---@type fun(name: ffi.cdata*, len: number): number
-  libevdev_event_type_from_name_n = c.libevdev_event_type_from_name_n,
-  ---@type fun(type: number, name: ffi.cdata*): number
-  libevdev_event_code_from_name = c.libevdev_event_code_from_name,
-  ---@type fun(type: number, name: ffi.cdata*, len: number): number
-  libevdev_event_code_from_name_n = c.libevdev_event_code_from_name_n,
-  ---@type fun(type: number, code: number, name: ffi.cdata*): number
-  libevdev_event_value_from_name = c.libevdev_event_value_from_name,
-  ---@type fun(name: ffi.cdata*): number
-  libevdev_event_type_from_code_name = c.libevdev_event_type_from_code_name,
-  ---@type fun(name: ffi.cdata*, len: number): number
-  libevdev_event_type_from_code_name_n = c.libevdev_event_type_from_code_name_n,
-  ---@type fun(name: ffi.cdata*): number
-  libevdev_event_code_from_code_name = c.libevdev_event_code_from_code_name,
-  ---@type fun(name: ffi.cdata*, len: number): number
-  libevdev_event_code_from_code_name_n = c.libevdev_event_code_from_code_name_n,
-  ---@type fun(type: number, code: number, name: ffi.cdata*, len: number): number
-  libevdev_event_value_from_name_n = c.libevdev_event_value_from_name_n,
-  ---@type fun(name: ffi.cdata*): number
-  libevdev_property_from_name = c.libevdev_property_from_name,
-  ---@type fun(name: ffi.cdata*, len: number): number
-  libevdev_property_from_name_n = c.libevdev_property_from_name_n,
-  ---@type fun(dev: ffi.cdata*, delay: ffi.cdata*, period: ffi.cdata*): number
-  libevdev_get_repeat = c.libevdev_get_repeat,
-
-  ---@diagnostic enable: undefined-field
+  lib = libevdev,
 }
 
 return mod

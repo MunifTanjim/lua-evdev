@@ -1,12 +1,15 @@
 local ffi = require("ffi")
 
-local input = require("evdev.linux.input")
 local Event = require("evdev.event")
-local evdev = require("evdev.libevdev")
+local input = require("evdev.linux.input")
 local util = require("evdev.util")
 
-local libevdev_grab_mode = evdev.enum.libevdev_grab_mode
-local libevdev_read_flag = evdev.enum.libevdev_read_flag
+local libevdev = require("evdev.libevdev")
+local evdev_enum = libevdev.enum
+local evdev = libevdev.lib
+
+local libevdev_grab_mode = evdev_enum.libevdev_grab_mode
+local libevdev_read_flag = evdev_enum.libevdev_read_flag
 local open_flag = util.enum.open_flag
 
 local new_libevdev_ptr = ffi.typeof("struct libevdev *[1]")

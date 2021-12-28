@@ -15,15 +15,17 @@ const char* libevdev_uinput_get_devnode(struct libevdev_uinput *uinput_dev);
 int libevdev_uinput_write_event(const struct libevdev_uinput *uinput_dev, unsigned int type, unsigned int code, int value);
 ]])
 
-local c = ffi.load("evdev")
+---@class libevdev_uinput
+---@field libevdev_uinput_create_from_device fun(dev: ffi.cdata*, uinput_fd: number, uinput_dev: ffi.cdata*): number
+---@field libevdev_uinput_destroy            fun(uinput_dev: ffi.cdata*): nil
+---@field libevdev_uinput_get_fd             fun(uinput_dev: ffi.cdata*): number
+---@field libevdev_uinput_get_syspath        fun(uinput_dev: ffi.cdata*): ffi.cdata*
+---@field libevdev_uinput_get_devnode        fun(uinput_dev: ffi.cdata*): ffi.cdata*
+---@field libevdev_uinput_write_event        fun(uinput_dev: ffi.cdata*, type: number, code: number, value: number): number
+local libevdev_uinput = ffi.load("evdev")
 
 local mod = {
-  libevdev_uinput_create_from_device = c.libevdev_uinput_create_from_device,
-  libevdev_uinput_destroy = c.libevdev_uinput_destroy,
-  libevdev_uinput_get_fd = c.libevdev_uinput_get_fd,
-  libevdev_uinput_get_syspath = c.libevdev_uinput_get_syspath,
-  libevdev_uinput_get_devnode = c.libevdev_uinput_get_devnode,
-  libevdev_uinput_write_event = c.libevdev_uinput_write_event,
+  lib = libevdev_uinput,
 }
 
 return mod
