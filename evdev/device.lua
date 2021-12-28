@@ -12,8 +12,6 @@ local libevdev_grab_mode = evdev_enum.libevdev_grab_mode
 local libevdev_read_flag = evdev_enum.libevdev_read_flag
 local open_flag = util.enum.open_flag
 
-local new_libevdev_ptr = ffi.typeof("struct libevdev *[1]")
-
 ---@class Device
 ---@field fd number
 ---@field pathname string
@@ -36,7 +34,7 @@ local function init(class, pathname, flags)
 
   self.fd = fd
 
-  local dev_ptr = new_libevdev_ptr()
+  local dev_ptr = libevdev.ctype.libevdev_ptr()
 
   local rc = evdev.libevdev_new_from_fd(fd, dev_ptr)
   if rc < 0 then

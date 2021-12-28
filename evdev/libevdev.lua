@@ -279,7 +279,12 @@ enum.libevdev_led_value = {
 ---@field libevdev_get_repeat                  fun(dev: ffi.cdata*, delay: ffi.cdata*, period: ffi.cdata*): number
 local libevdev = ffi.load("evdev")
 
+local ctype = {
+  libevdev_ptr = ffi.typeof("struct libevdev *[1]"),
+}
+
 local mod = {
+  ctype = ctype,
   enum = enum,
   lib = libevdev,
 }
