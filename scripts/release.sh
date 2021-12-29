@@ -30,6 +30,8 @@ sed -e "${script}" -i ${rockspec}
 script="/^ \\+tag = nil,/s|nil|version|"
 sed -e "${script}" -i ${rockspec}
 
+luarocks make --no-install "${rockspec}"
+
 git add ${rockspec}
 
 git commit -m "chore: release ${version}"
