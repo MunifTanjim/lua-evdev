@@ -21,4 +21,10 @@ if ! test -f ${rockspec}; then
   exit 1
 fi
 
-luarocks upload rockspecs/lua-evdev-${version}.rockspec --api-key=${LUAROCKS_API_KEY} $@
+declare force_upload=""
+
+if [[ "${LUAROCKS_UPLOAD_FORCE}" = "true" ]]; then
+  force_upload="--force"
+fi
+
+luarocks upload --api-key=${LUAROCKS_API_KEY} ${force_upload} ${rockspec}
