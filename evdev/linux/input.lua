@@ -119,9 +119,13 @@ struct ff_effect {
 };
 ]])
 
+--luacheck: push no max line length
+
 ---@alias evdev_timeval { tv_sec: number, tv_usec: number }
 ---@alias evdev_input_event { time: evdev_timeval, type: number, code: number, value: number }
 ---@alias evdev_input_absinfo { value: number, minimum: number, maximum: number, fuzz: number, flat: number, resolution: number }
+
+--luacheck: pop
 
 local ctype = {
   int = ffi.typeof("int"),

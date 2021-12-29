@@ -1,3 +1,5 @@
+--luacheck: no max line length
+
 ---@alias EVDEV_INPUT_ID_CONSTANT_NAME "'ID_BUS'"|"'ID_VENDOR'"|"'ID_PRODUCT'"|"'ID_VERSION'"
 
 local ID = {
