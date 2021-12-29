@@ -15,18 +15,16 @@ if [[ "${version}" != *"-"* ]]; then
 fi
 
 
-declare -r rockspec_template="${package}-dev-1.rockspec"
+declare -r dev_rockspec="rockspecs/${package}-dev-1.rockspec"
 declare -r rockspec_file="${package}-${version}.rockspec"
 declare -r rockspec="rockspecs/${package}-${version}.rockspec"
-
-mkdir -p "$(dirname ${rockspec})"
 
 if test -f ${rockspec}; then
   echo "already exists: ${rockspec}" >&2
   exit 1
 fi
 
-cp ${rockspec_template} ${rockspec}
+cp ${dev_rockspec} ${rockspec}
 script="/^version/s|\"[^\"]\\+\"|\"${version}\"|"
 sed -e "${script}" -i ${rockspec}
 script="/^ \\+tag = nil,/s|nil|version|"
