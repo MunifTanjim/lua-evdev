@@ -196,6 +196,8 @@ enum.libevdev_led_value = {
   OFF = enum.LIBEVDEV_LED_OFF,
 }
 
+--luacheck: push no max line length
+
 ---@class libevdev: ffi.namespace*
 ---@field libevdev_new                         fun(): ffi.cdata*
 ---@field libevdev_new_from_fd                 fun(fd: number, dev: ffi.cdata*): number
@@ -278,6 +280,8 @@ enum.libevdev_led_value = {
 ---@field libevdev_property_from_name_n        fun(name: ffi.cdata*, len: number): number
 ---@field libevdev_get_repeat                  fun(dev: ffi.cdata*, delay: ffi.cdata*, period: ffi.cdata*): number
 local libevdev = ffi.load("evdev")
+
+--luacheck: pop
 
 local ctype = {
   libevdev_ptr = ffi.typeof("struct libevdev *[1]"),

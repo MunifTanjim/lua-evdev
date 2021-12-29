@@ -23,6 +23,9 @@ declare -a group_names=(
 )
 
 function generate_tables() {
+  echo "--luacheck: no max line length"
+  echo ""
+
   for group_name in ${group_names[@]}; do
     local filter_pattern="#define ${group_name}_"
     if [[ "${group_name}" = "KEY" ]]; then

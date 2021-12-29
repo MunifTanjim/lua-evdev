@@ -1,3 +1,5 @@
+.luacheckcache
+
 /luarocks
 /lua_modules
 /.luarocks
