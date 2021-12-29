@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: [main]
+    tags:
+      - '[0-1].[0-9]+.[0-9]+-[0-9]'
   pull_request:
     branches: [main]
 
@@ -79,3 +81,50 @@ jobs:
           luarocks_versions: 5.1.5:3.8.0
       - name: Build
         run: luarocks make --no-install rockspecs/lua-evdev-dev-1.rockspec
+
+  publish:
+    name: publish
+    runs-on: ubuntu-20.04
+    if: github.event_name == 'push'
+    needs:
+      - lint
+      - format
+      - build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get Version
+        id: lua-evdev-version
+        run: |
+          if test "${GITHUB_REF_TYPE}" = "tag"; then
+            echo "::set-output name=value::${GITHUB_REF_NAME}"
+          else
+            echo "::set-output name=value::dev-1"
+          fi
+      - name: Get Cache Key
+        id: luver-cache-key
+        env:
+          CI_RUNNER_OS: ${{ runner.os }}
+          CI_SECRETS_CACHE_VERSION: ${{ secrets.CACHE_VERSION }}
+        run: |
+          echo "::set-output name=value::${CI_RUNNER_OS}-luver-${CI_SECRETS_CACHE_VERSION}-publish-$(date -u +%Y-%m-%d)"
+        shell: bash
+      - name: Setup Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/share/luver
+          key: ${{ steps.luver-cache-key.outputs.value }}
+      - name: Setup Lua
+        uses: MunifTanjim/luver-action@v1
+        with:
+          default: 5.1.5
+          lua_versions: 5.1.5
+          luajit_versions: 5.1.5:2.1.0-git
+          luarocks_versions: 5.1.5:3.8.0
+      - name: Publish
+        env:
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
+          LUA_EVDEV_VERSION: ${{ steps.lua-evdev-version.outputs.value }}
+        run: |
+          luarocks install lua-cjson
+          ./scripts/publish.sh ${LUA_EVDEV_VERSION} --force
