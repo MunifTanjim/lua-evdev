@@ -85,7 +85,7 @@ jobs:
   publish:
     name: publish
     runs-on: ubuntu-20.04
-    if: github.event_name == 'push'
+    if: github.ref_type == 'tag'
     needs:
       - lint
       - format
@@ -96,11 +96,7 @@ jobs:
       - name: Get Version
         id: lua-evdev-version
         run: |
-          if test "${GITHUB_REF_TYPE}" = "tag"; then
-            echo "::set-output name=value::${GITHUB_REF_NAME}"
-          else
-            echo "::set-output name=value::dev-1"
-          fi
+          echo "::set-output name=value::${GITHUB_REF_NAME}"
       - name: Get Cache Key
         id: luver-cache-key
         env:
@@ -123,8 +119,9 @@ jobs:
           luarocks_versions: 5.1.5:3.8.0
       - name: Publish
         env:
-          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
           LUA_EVDEV_VERSION: ${{ steps.lua-evdev-version.outputs.value }}
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
+          LUAROCKS_UPLOAD_FORCE: ${{ secrets.LUAROCKS_UPLOAD_FORCE }}
         run: |
           luarocks install lua-cjson
-          ./scripts/publish.sh ${LUA_EVDEV_VERSION} --force
+          ./scripts/publish.sh ${LUA_EVDEV_VERSION}
