@@ -16,7 +16,6 @@ fi
 
 
 declare -r dev_rockspec="rockspecs/${package}-dev-1.rockspec"
-declare -r rockspec_file="${package}-${version}.rockspec"
 declare -r rockspec="rockspecs/${package}-${version}.rockspec"
 
 if test -f ${rockspec}; then
