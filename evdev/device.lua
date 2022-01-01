@@ -13,46 +13,52 @@ local libevdev_read_flag = evdev_enum.libevdev_read_flag
 local open_flag = util.enum.open_flag
 
 ---@class Device
----@field fd number
----@field pathname string
 ---@field dev ffi.cdata*
 local Device = {}
 
----@param pathname string
----@param flags number[] `open_flag[]`
+---@param fd_or_pathname? number|string
+---@param flags? nil|number[]
 ---@return Device
-local function init(class, pathname, flags)
+local function init(class, fd_or_pathname, flags)
   ---@type Device
   local self = setmetatable({}, { __index = class })
 
-  self.pathname = pathname
-
-  local fd = util.open_file(pathname, flags or { open_flag.RDONLY, open_flag.NONBLOCK })
-  if fd < 0 then
-    return nil, string.format("Error: %s", util.err_string(ffi.errno()))
+  ---@type nil|number
+  local fd
+  if type(fd_or_pathname) == "number" then
+    fd = fd_or_pathname
+  elseif type(fd_or_pathname) == "string" then
+    fd = util.open_file(fd_or_pathname, flags or { open_flag.RDONLY, open_flag.NONBLOCK })
+    if fd < 0 then
+      return nil, string.format("Error: can't open %s - %s", fd_or_pathname, util.err_string(ffi.errno()))
+    end
   end
 
-  self.fd = fd
+  if fd then
+    local dev_ptr = libevdev.ctype.libevdev_ptr()
 
-  local dev_ptr = libevdev.ctype.libevdev_ptr()
+    local rc = evdev.libevdev_new_from_fd(fd, dev_ptr)
+    if rc < 0 then
+      return nil, string.format("Error: %s", util.err_string(-rc))
+    end
 
-  local rc = evdev.libevdev_new_from_fd(fd, dev_ptr)
-  if rc < 0 then
-    return nil, string.format("Error: %s", util.err_string(-rc))
+    self.dev = dev_ptr[0]
+  else
+    self.dev = evdev.libevdev_new()
   end
-
-  self.dev = dev_ptr[0]
 
   ffi.gc(self.dev, evdev.libevdev_free)
 
   return self
 end
 
----@param pathname string
----@param flags number[] `open_flag[]`
----@return Device
-function Device:new(pathname, flags)
-  return init(self, pathname, flags)
+---@override fun(): Device
+---@override fun(fd: number): Device
+---@override fun(pathname: string, flags: number[]): Device
+---@param fd_or_pathname? number|string
+---@param flags? nil|number[]
+function Device:new(fd_or_pathname, flags)
+  return init(self, fd_or_pathname, flags)
 end
 
 ---@param mode boolean|number `libevdev_grab_mode`
