@@ -82,38 +82,80 @@ function Device:has_event_pending()
   return evdev.libevdev_has_event_pending(self.dev) == 1
 end
 
+---@param name? string
 ---@return string
-function Device:name()
+function Device:name(name)
+  if name then
+    evdev.libevdev_set_name(self.dev, name)
+    return name
+  end
+
   return util.to_string(evdev.libevdev_get_name(self.dev))
 end
 
+---@param phys? string
 ---@return string
-function Device:phys()
+function Device:phys(phys)
+  if phys then
+    evdev.libevdev_set_phys(self.dev, phys)
+    return phys
+  end
+
   return util.to_string(evdev.libevdev_get_phys(self.dev))
 end
 
+---@param uniq? string
 ---@return string
-function Device:uniq()
+function Device:uniq(uniq)
+  if uniq then
+    evdev.libevdev_set_uniq(self.dev, uniq)
+    return uniq
+  end
+
   return util.to_string(evdev.libevdev_get_uniq(self.dev))
 end
 
+---@param product_id? number
 ---@return number
-function Device:id_product()
+function Device:product_id(product_id)
+  if product_id then
+    evdev.libevdev_set_id_product(self.dev, product_id)
+    return product_id
+  end
+
   return evdev.libevdev_get_id_product(self.dev)
 end
 
+---@param vendor_id? number
 ---@return number
-function Device:id_vendor()
+function Device:vendor_id(vendor_id)
+  if vendor_id then
+    evdev.libevdev_set_id_vendor(self.dev, vendor_id)
+    return vendor_id
+  end
+
   return evdev.libevdev_get_id_vendor(self.dev)
 end
 
+---@param bustype? number
 ---@return number
-function Device:id_bustype()
+function Device:bustype(bustype)
+  if bustype then
+    evdev.libevdev_set_id_bustype(self.dev, bustype)
+    return bustype
+  end
+
   return evdev.libevdev_get_id_bustype(self.dev)
 end
 
+---@param version? number
 ---@return number
-function Device:id_version()
+function Device:version(version)
+  if version then
+    evdev.libevdev_set_id_version(self.dev, version)
+    return version
+  end
+
   return evdev.libevdev_get_id_version(self.dev)
 end
 
@@ -154,45 +196,92 @@ function Device:has_event_code(ev_type, ev_code)
 end
 
 ---@param code number
+---@param value? number
 ---@return number
-function Device:abs_minimum(code)
+function Device:abs_minimum(code, value)
+  if value then
+    evdev.libevdev_set_abs_minimum(self.dev, code, value)
+    return value
+  end
+
   return evdev.libevdev_get_abs_minimum(self.dev, code)
 end
 
 ---@param code number
+---@param value? number
 ---@return number
-function Device:abs_maximum(code)
+function Device:abs_maximum(code, value)
+  if value then
+    evdev.libevdev_set_abs_maximum(self.dev, code, value)
+    return value
+  end
+
   return evdev.libevdev_get_abs_maximum(self.dev, code)
 end
 
 ---@param code number
+---@param value? number
 ---@return number
-function Device:abs_fuzz(code)
+function Device:abs_fuzz(code, value)
+  if value then
+    evdev.libevdev_set_abs_fuzz(self.dev, code, value)
+    return value
+  end
+
   return evdev.libevdev_get_abs_fuzz(self.dev, code)
 end
 
 ---@param code number
+---@param value? number
 ---@return number
-function Device:abs_flat(code)
+function Device:abs_flat(code, value)
+  if value then
+    evdev.libevdev_set_abs_flat(self.dev, code, value)
+    return value
+  end
+
   return evdev.libevdev_get_abs_flat(self.dev, code)
 end
 
 ---@param code number
+---@param value? number
 ---@return number
-function Device:abs_resolution(code)
+function Device:abs_resolution(code, value)
+  if value then
+    evdev.libevdev_set_abs_resolution(self.dev, code, value)
+    return value
+  end
+
   return evdev.libevdev_get_abs_resolution(self.dev, code)
 end
 
 ---@param code number
+---@param abs_info? evdev_input_absinfo
 ---@return ffi.cdata*|evdev_input_absinfo
-function Device:abs_info(code)
+function Device:abs_info(code, abs_info)
+  if abs_info then
+    local value = input.ctype.input_absinfo(abs_info)
+    evdev.libevdev_set_abs_info(self.dev, code, value)
+    return value
+  end
+
   return evdev.libevdev_get_abs_info(self.dev, code)
 end
 
 ---@param ev_type number
 ---@param code number
+---@param value? number
 ---@return number
-function Device:event_value(ev_type, code)
+function Device:event_value(ev_type, code, value)
+  if value then
+    local rc = evdev.libevdev_set_event_value(self.dev, ev_type, code, value)
+    if rc == 0 then
+      return value
+    end
+
+    return nil, string.format("Error: failed to set event(type:%d, code:%d) value(%d)", ev_type, code, value)
+  end
+
   return evdev.libevdev_get_event_value(self.dev, ev_type, code)
 end
 
@@ -210,8 +299,18 @@ end
 
 ---@param slot number
 ---@param code number
+---@param value? number
 ---@return number
-function Device:slot_value(slot, code)
+function Device:slot_value(slot, code, value)
+  if value then
+    local rc = evdev.libevdev_set_slot_value(self.dev, slot, code, value)
+    if rc == 0 then
+      return value
+    end
+
+    return nil, string.format("Error: failed to set slot(%d, code:%d) value(%d)", slot, code, value)
+  end
+
   return evdev.libevdev_get_slot_value(self.dev, slot, code)
 end
 
