@@ -59,6 +59,7 @@ local function events(dev, initial_state)
     end
   end
 
+  ---@return Event
   local function iter(state)
     local rc, ev = 0, Event:new()
 
@@ -89,6 +90,28 @@ local initial_state = {
 for ev in events(dev, initial_state) do
   print_event(ev)
 end
+```
+
+### Initializing a UInputDevice
+
+```lua
+local Device = require("evdev.device")
+local UIDevice = require("evdev.uinput-device")
+
+---@param uidev UInputDevice
+local function print_uinput_device(uidev)
+  print("============", "===")
+  print("=       FD: ", uidev:fd())
+  print("=  SysPath: ", uidev:syspath())
+  print("=  DevNode: ", uidev:devnode())
+  print("============", "===")
+end
+
+local dev = Device:new("/dev/input/event7")
+
+local uidev = UIDevice:new(dev)
+
+print_uinput_device(uidev)
 ```
 
 ## License
