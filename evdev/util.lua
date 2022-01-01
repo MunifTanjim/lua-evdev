@@ -68,4 +68,22 @@ function mod.err_string(errnum)
   return mod.to_string(clib.strerror(errnum))
 end
 
+---@param fd_or_pathname? number|string
+---@param flags? nil|number[]
+---@return nil|number fd, string|nil err
+function mod.to_fd(fd_or_pathname, flags)
+  local fd
+
+  if type(fd_or_pathname) == "number" then
+    fd = fd_or_pathname
+  elseif type(fd_or_pathname) == "string" then
+    fd = mod.open_file(fd_or_pathname, flags or { enum.open_flag.RDONLY, enum.open_flag.NONBLOCK })
+    if fd < 0 then
+      return nil, string.format("Error: can't open %s - %s", fd_or_pathname, mod.err_string(ffi.errno()))
+    end
+  end
+
+  return fd
+end
+
 return mod

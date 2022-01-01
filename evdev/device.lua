@@ -10,29 +10,10 @@ local evdev = libevdev.lib
 
 local libevdev_grab_mode = evdev_enum.libevdev_grab_mode
 local libevdev_read_flag = evdev_enum.libevdev_read_flag
-local open_flag = util.enum.open_flag
 
 ---@class Device
 ---@field dev ffi.cdata*
 local Device = {}
-
----@param fd_or_pathname? number|string
----@param flags? nil|number[]
----@return number fd, string|nil err
-local function get_fd(fd_or_pathname, flags)
-  local fd
-
-  if type(fd_or_pathname) == "number" then
-    fd = fd_or_pathname
-  elseif type(fd_or_pathname) == "string" then
-    fd = util.open_file(fd_or_pathname, flags or { open_flag.RDONLY, open_flag.NONBLOCK })
-    if fd < 0 then
-      return nil, string.format("Error: can't open %s - %s", fd_or_pathname, util.err_string(ffi.errno()))
-    end
-  end
-
-  return fd
-end
 
 ---@param fd_or_pathname? number|string
 ---@param flags? nil|number[]
@@ -41,7 +22,7 @@ local function init(class, fd_or_pathname, flags)
   ---@type Device
   local self = setmetatable({}, { __index = class })
 
-  local fd, fd_err = get_fd(fd_or_pathname, flags)
+  local fd, fd_err = util.to_fd(fd_or_pathname, flags)
   if fd_err then
     return nil, fd_err
   end
@@ -89,7 +70,7 @@ function Device:fd(fd_or_pathname, flags)
     return self._fd
   end
 
-  local fd, fd_err = get_fd(fd_or_pathname, flags)
+  local fd, fd_err = util.to_fd(fd_or_pathname, flags)
   if fd_err then
     return nil, fd_err
   end
