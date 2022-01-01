@@ -23,7 +23,7 @@ fi
 
 declare force_upload=""
 
-if [[ "${LUAROCKS_UPLOAD_FORCE}" = "true" ]]; then
+if [[ "${LUAROCKS_UPLOAD_FORCE:-"false"}" = "true" ]]; then
   force_upload="--force"
 fi
 
