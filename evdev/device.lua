@@ -18,13 +18,10 @@ local Device = {}
 
 ---@param fd_or_pathname? number|string
 ---@param flags? nil|number[]
----@return Device
-local function init(class, fd_or_pathname, flags)
-  ---@type Device
-  local self = setmetatable({}, { __index = class })
-
-  ---@type nil|number
+---@return number fd, string|nil err
+local function get_fd(fd_or_pathname, flags)
   local fd
+
   if type(fd_or_pathname) == "number" then
     fd = fd_or_pathname
   elseif type(fd_or_pathname) == "string" then
@@ -32,6 +29,21 @@ local function init(class, fd_or_pathname, flags)
     if fd < 0 then
       return nil, string.format("Error: can't open %s - %s", fd_or_pathname, util.err_string(ffi.errno()))
     end
+  end
+
+  return fd
+end
+
+---@param fd_or_pathname? number|string
+---@param flags? nil|number[]
+---@return Device
+local function init(class, fd_or_pathname, flags)
+  ---@type Device
+  local self = setmetatable({}, { __index = class })
+
+  local fd, fd_err = get_fd(fd_or_pathname, flags)
+  if fd_err then
+    return nil, fd_err
   end
 
   if fd then
@@ -42,6 +54,7 @@ local function init(class, fd_or_pathname, flags)
       return nil, string.format("Error: %s", util.err_string(-rc))
     end
 
+    self._fd = fd
     self.dev = dev_ptr[0]
   else
     self.dev = evdev.libevdev_new()
@@ -59,6 +72,41 @@ end
 ---@param flags? nil|number[]
 function Device:new(fd_or_pathname, flags)
   return init(self, fd_or_pathname, flags)
+end
+
+---@param fd_or_pathname? number|string
+---@param flags? nil|number[]
+---@return number fd
+function Device:fd(fd_or_pathname, flags)
+  if not fd_or_pathname then
+    local fd = evdev.libevdev_get_fd(self.dev)
+    if fd == -1 then
+      self._fd = nil
+      return nil
+    end
+
+    self._fd = fd
+    return self._fd
+  end
+
+  local fd, fd_err = get_fd(fd_or_pathname, flags)
+  if fd_err then
+    return nil, fd_err
+  end
+
+  local rc
+  if self._fd then
+    rc = evdev.libevdev_change_fd(self.dev, fd)
+  else
+    rc = evdev.libevdev_set_fd(self.dev, fd)
+  end
+
+  if rc < 0 then
+    return nil, string.format("Error: %s", util.err_string(-rc))
+  end
+
+  self._fd = fd
+  return self._fd
 end
 
 ---@param mode boolean|number `libevdev_grab_mode`
