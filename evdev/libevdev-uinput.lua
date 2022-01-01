@@ -19,6 +19,19 @@ int libevdev_uinput_write_event(const struct libevdev_uinput *uinput_dev, unsign
 
 --luacheck: pop
 
+---@diagnostic disable: undefined-field
+--
+local enum = {
+  ---@type number
+  LIBEVDEV_UINPUT_OPEN_MANAGED = ffi.C.LIBEVDEV_UINPUT_OPEN_MANAGED,
+}
+
+---@diagnostic enable: undefined-field
+
+enum.libevdev_uinput_open_mode = {
+  MANAGED = enum.LIBEVDEV_UINPUT_OPEN_MANAGED,
+}
+
 --luacheck: push no max line length
 
 ---@class libevdev_uinput
@@ -32,7 +45,13 @@ local libevdev_uinput = ffi.load("evdev")
 
 --luacheck: pop
 
+local ctype = {
+  libevdev_uinput_ptr = ffi.typeof("struct libevdev_uinput *[1]"),
+}
+
 local mod = {
+  ctype = ctype,
+  enum = enum,
   lib = libevdev_uinput,
 }
 
