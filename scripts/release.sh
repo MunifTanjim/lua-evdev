@@ -3,7 +3,6 @@
 set -eu
 
 declare -r package="lua-evdev"
-declare -r repo="github.com/MunifTanjim/lua-evdev"
 
 declare version="${1:-}"
 if [[ -z "${version}" ]]; then
