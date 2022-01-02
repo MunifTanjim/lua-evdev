@@ -46,9 +46,9 @@ local function init(class, fd_or_pathname, flags)
   return self
 end
 
----@override fun(): Device
----@override fun(fd: number): Device
----@override fun(pathname: string, flags: number[]): Device
+---@overload fun(self): Device
+---@overload fun(self, fd: number): Device
+---@overload fun(self, pathname: string, flags: number[]): Device
 ---@param fd_or_pathname? number|string
 ---@param flags? nil|number[]
 function Device:new(fd_or_pathname, flags)
