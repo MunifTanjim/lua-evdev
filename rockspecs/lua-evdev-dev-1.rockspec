@@ -26,6 +26,7 @@ build = {
     ["evdev.linux.input"] = "evdev/linux/input.lua",
     ["evdev.linux.input-constant"] = "evdev/linux/input-constant.lua",
     ["evdev.linux.sys.ioctl"] = "evdev/linux/sys/ioctl.lua",
+    ["evdev.uinput-device"] = "evdev/uinput-device.lua",
     ["evdev.util"] = "evdev/util.lua",
   },
 }
