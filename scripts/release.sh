@@ -9,28 +9,54 @@ if [[ -z "${version}" ]]; then
   echo "missing version" >&2
   exit 1
 fi
-if [[ "${version}" != *"-"* ]]; then
-  version="${version}-1"
+
+declare rockspec_revision="1"
+if [[ "${version}" = *"-"* ]]; then
+  rockspec_revision="${version##*-}"
+  version="${version%%-*}"
 fi
 
+function prepare_luarocks_package() {
+  local -r ver="${version}"
+  local -r rev="${rockspec_revision}"
 
-declare -r dev_rockspec="rockspecs/${package}-dev-1.rockspec"
-declare -r rockspec="rockspecs/${package}-${version}.rockspec"
+  local -r dev_rockspec="rockspecs/${package}-dev-1.rockspec"
+  local -r rockspec="rockspecs/${package}-${ver}-${rev}.rockspec"
 
-if test -f ${rockspec}; then
-  echo "already exists: ${rockspec}" >&2
-  exit 1
-fi
+  if test -f ${rockspec}; then
+    echo "already exists: ${rockspec}" >&2
+    exit 1
+  fi
 
-cp ${dev_rockspec} ${rockspec}
-script="/^version/s|\"[^\"]\\+\"|\"${version}\"|"
-sed -e "${script}" -i ${rockspec}
-script="/^ \\+tag = nil,/s|nil|version|"
-sed -e "${script}" -i ${rockspec}
+  cp ${dev_rockspec} ${rockspec}
 
-luarocks make --no-install "${rockspec}"
+  local script
+  script="/^version/s|\"[^\"]\\+\"|\"${ver}-${rev}\"|"
+  sed -e "${script}" -i ${rockspec}
+  script="/^ \\+tag = nil,/s|nil|version|"
+  sed -e "${script}" -i ${rockspec}
 
-git add ${rockspec}
+  luarocks make --no-install "${rockspec}"
 
-git commit -m "chore: release ${version}"
-git tag "${version}" -m "${version}"
+  git add "${rockspec}"
+}
+
+function prepare_lit_package() {
+  local -r ver="${version}"
+
+  local -r metadata="evdev/package.lua"
+
+  local script
+  script="/^ \+version/s|\"[^\"]\\+\"|\"${ver}\"|"
+  sed -e "${script}" -i "${metadata}"
+
+  git add "${metadata}"
+}
+
+prepare_luarocks_package
+prepare_lit_package
+
+declare -r tag="${version}-${rockspec_revision}"
+
+git commit -m "chore: release ${tag}"
+git tag "${tag}" -m "${tag}"
