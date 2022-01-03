@@ -2,6 +2,20 @@
 
 LuaJIT FFI Bindings for [`libevdev`](https://gitlab.freedesktop.org/libevdev/libevdev).
 
+## Installation
+
+**Using `luarocks`**
+
+```sh
+luarocks install lua-evdev
+```
+
+**Using `lit`**
+
+```sh
+lit install MunifTanjim/evdev
+```
+
 ## Usage
 
 ### Initializing a Device
