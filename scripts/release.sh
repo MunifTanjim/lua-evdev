@@ -5,32 +5,49 @@ set -eu
 declare -r package="lua-evdev"
 
 declare version="${1:-}"
+declare rockspec_version="${version}"
+
 if [[ -z "${version}" ]]; then
   echo "missing version" >&2
   exit 1
 fi
+
 if [[ "${version}" != *"-"* ]]; then
-  version="${version}-1"
+  rockspec_version="${version}-1"
+else
+  version="${version%%-*}"
 fi
 
-
-declare -r dev_rockspec="rockspecs/${package}-dev-1.rockspec"
-declare -r rockspec="rockspecs/${package}-${version}.rockspec"
-
-if test -f ${rockspec}; then
-  echo "already exists: ${rockspec}" >&2
+if [[ ! "${version}" =~ ^[0-9]+.[0-9]+.[0-9]+$ ]]; then
+  echo "invalid version: ${version}" >&2
   exit 1
 fi
 
-cp ${dev_rockspec} ${rockspec}
-script="/^version/s|\"[^\"]\\+\"|\"${version}\"|"
-sed -e "${script}" -i ${rockspec}
-script="/^ \\+tag = nil,/s|nil|version|"
-sed -e "${script}" -i ${rockspec}
+if [[ ! "${rockspec_version}" =~ ^${version}-[1-9]{1,}$ ]]; then
+  echo "invalid rockspec version: ${rockspec_version}" >&2
+  exit 1
+fi
+
+if test -n "$(git tag -l "${rockspec_version}")"; then
+  echo "rockspec version already exists: ${rockspec_version}" >&2
+  exit 1
+fi
+
+declare -r repo_rockspec="${package}.rockspec"
+declare -r rockspec="${package}-${rockspec_version}.rockspec"
+
+./scripts/make-rockspec.sh "${rockspec_version}"
 
 luarocks make --no-install "${rockspec}"
 
-git add ${rockspec}
+cp "${rockspec}" "${repo_rockspec}"
 
-git commit -m "chore: release ${version}"
+git add ${repo_rockspec}
+
+git commit -m "chore: release ${rockspec_version}"
+
+if test -n "$(git tag -l "${version}")"; then
+  git tag --delete "${version}"
+fi
 git tag "${version}" -m "${version}"
+git tag "${rockspec_version}" -m "${rockspec_version}"
