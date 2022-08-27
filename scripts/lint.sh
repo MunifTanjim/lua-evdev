@@ -9,4 +9,6 @@ echo
 echo "[luarocks lint]"
 echo
 
-luarocks lint "lua-evdev.rockspec"
+echo "Checking lua-evdev-dev-1.rockspec"
+./scripts/make-rockspec.sh dev-1
+luarocks lint "lua-evdev-dev-1.rockspec"
