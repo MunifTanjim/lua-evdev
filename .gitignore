@@ -5,5 +5,5 @@
 /.luarocks
 /lua
 
-lua-evdev-*.rock
+lua-evdev-*.rock*
 lua-evdev-*.tar.gz
