@@ -1,9 +1,9 @@
 rockspec_format = "3.0"
 package = "lua-evdev"
-version = "0.0.4-1"
+version = "0.0.5-1"
 source = {
   url = "git+https://github.com/MunifTanjim/lua-evdev.git",
-  tag = "0.0.4-1",
+  tag = "0.0.5",
 }
 description = {
   summary = "LuaJIT FFI Bindings for libevdev.",
