@@ -80,7 +80,9 @@ jobs:
           luajit_versions: 5.1.5:2.1.0-git
           luarocks_versions: 5.1.5:3.8.0
       - name: Build
-        run: luarocks make --no-install rockspecs/lua-evdev-dev-1.rockspec
+        run: |
+          ./scripts/make-rockspec.sh dev-1
+          luarocks make --no-install lua-evdev-dev-1.rockspec
 
   publish:
     name: publish
